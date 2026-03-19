@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(./gradlew assembleDebug 2>&1 | tail -100)",
+      "Bash(chmod:*)",
+      "Bash(java:*)",
+      "Bash(./gradlew assembleDebug 2>&1 | tail -150)",
+      "Bash(/usr/libexec/java_home -V 2>&1)",
+      "Bash(export:*)",
+      "Bash(./gradlew compileDebugKotlin 2>&1 | head -100)",
+      "Bash(./gradlew assembleDebug 2>&1)",
+      "Bash(adb logcat:*)",
+      "Bash(./gradlew clean:*)",
+      "Bash(./gradlew assembleDebug --info 2>&1 | grep -E \"NavRoutes|Task.*compileDebugKotlin\")"
+    ]
+  }
+}

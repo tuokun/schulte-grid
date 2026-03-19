@@ -1,20 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Schulte Grid</string>
-    <string name="app_name_cn">舒尔特方格</string>
-    <string name="setting_difficulty">难度</string>
-    <string name="setting_size">大小</string>
+    <string name="app_name">舒尔特方格</string>
+
+    <!-- Home Screen -->
+    <string name="tagline">专注力训练</string>
+    <string name="start_game">开始游戏</string>
+
+    <!-- Game settings -->
+    <string name="setting_size">网格大小</string>
+    <string name="setting_difficulty">难度级别</string>
     <string name="setting_history">历史成绩</string>
     <string name="setting_about">关于</string>
-    <string name="difficulty_easy">容易</string>
-    <string name="difficulty_normal">一般</string>
+
+    <!-- Grid sizes -->
+    <string name="size_3_3">3×3</string>
+    <string name="size_4_4">4×4</string>
+    <string name="size_5_5">5×5</string>
+    <string name="size_6_6">6×6</string>
+
+    <!-- Difficulty levels -->
+    <string name="difficulty_easy">简单</string>
+    <string name="difficulty_normal">普通</string>
     <string name="difficulty_hard">困难</string>
+
+    <!-- Difficulty descriptions -->
+    <string name="difficulty_easy_desc">按对有反馈</string>
+    <string name="difficulty_normal_desc">标准模式</string>
+    <string name="difficulty_hard_desc">按错罚时100ms</string>
+
+    <!-- Game UI -->
+    <string name="ready_message">准备好了吗？</string>
     <string name="start">开始</string>
-    <string name="again">再来</string>
-    <string name="ready">准备</string>
-    <string name="size_3_3">3x3</string>
-    <string name="size_4_4">4x4</string>
-    <string name="size_5_5">5x5</string>
-    <string name="size_6_6">6x6</string>
-    <string name="time">时间</string>
-    <string name="score">成绩</string>
+    <string name="complete">完成！</string>
+    <string name="play_again">再来一次</string>
+    <string name="includes_penalty">含罚时</string>
+    <string name="target">目标</string>
+    <string name="ready_to_start">准备开始</string>
+    <string name="completed">已完成</string>
+
+    <!-- Navigation -->
+    <string name="history">历史记录</string>
+    <string name="best_scores">最佳成绩</string>
+    <string name="recent_records">最近记录</string>
+    <string name="about">关于</string>
+    <string name="back">返回</string>
+
+    <!-- Messages -->
+    <string name="easy_mode_hint">按对有反馈</string>
+    <string name="normal_mode_desc">标准模式</string>
+    <string name="hard_mode_hint">按错罚时100ms</string>
+    <string name="no_records">暂无游戏记录</string>
+
+    <!-- About -->
+    <string name="about_title">关于</string>
+    <string name="about_description">一个简洁的舒尔特方格训练应用</string>
+    <string name="about_author">作者：cgfhsc</string>
+    <string name="about_version">版本：2.1.2</string>
+
+    <!-- Dialogs -->
+    <string name="select_size_title">选择网格大小</string>
+    <string name="select_difficulty_title">选择难度</string>
+    <string name="cancel">取消</string>
+    <string name="ok">确定</string>
 </resources>
