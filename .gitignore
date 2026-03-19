@@ -42,6 +42,14 @@ captures/
 
 # Keystore files
 *.jks
+KEYSTORE.md
+keystore/
+
+# Claude Code
+.claude/
+
+# IDE
+.idea/
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild

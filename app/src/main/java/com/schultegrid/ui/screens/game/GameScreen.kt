@@ -113,6 +113,7 @@ fun GameScreen(
 
                     is GameState.Playing -> {
                         // 游戏中状态 - 显示网格
+                        val playingState = uiState.gameState as GameState.Playing
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -121,6 +122,7 @@ fun GameScreen(
                             GameGrid(
                                 cells = uiState.gridCells,
                                 dimension = uiState.gridDimension,
+                                nextExpectedNumber = playingState.nextExpectedNumber,
                                 showHighlight = config.isEasyMode(),
                                 onCellClick = { number -> viewModel.onCellClick(number) }
                             )

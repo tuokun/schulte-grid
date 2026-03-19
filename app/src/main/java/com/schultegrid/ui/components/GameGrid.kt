@@ -31,6 +31,7 @@ import com.schultegrid.ui.theme.GridCellDefault
  *
  * @param cells List of grid cells to display
  * @param dimension Grid dimension (e.g., 5 for 5x5)
+ * @param nextExpectedNumber The next number that should be clicked
  * @param showHighlight Whether to show highlight border on next expected number (easy mode only)
  * @param onCellClick Callback when a cell is clicked
  */
@@ -38,6 +39,7 @@ import com.schultegrid.ui.theme.GridCellDefault
 fun GameGrid(
     cells: List<GridCell>,
     dimension: Int,
+    nextExpectedNumber: Int,
     showHighlight: Boolean,
     onCellClick: (Int) -> Unit
 ) {
@@ -51,6 +53,7 @@ fun GameGrid(
             val cell = cells[index]
             GridCellItem(
                 cell = cell,
+                nextExpectedNumber = nextExpectedNumber,
                 showHighlight = showHighlight,
                 onClick = { onCellClick(cell.number) }
             )
@@ -64,6 +67,7 @@ fun GameGrid(
 @Composable
 fun GridCellItem(
     cell: GridCell,
+    nextExpectedNumber: Int,
     showHighlight: Boolean,
     onClick: () -> Unit
 ) {
@@ -72,7 +76,9 @@ fun GridCellItem(
         else -> GridCellDefault
     }
 
-    val borderColor = if (showHighlight) {
+    // 只在简单模式且该单元格是下一个目标数字时显示高亮
+    val isTargetNumber = cell.number == nextExpectedNumber
+    val borderColor = if (showHighlight && isTargetNumber && !cell.isClicked) {
         MaterialTheme.colorScheme.primary
     } else {
         Color.Transparent
