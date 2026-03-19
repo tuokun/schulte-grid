@@ -13,7 +13,8 @@ import kotlin.jvm.JvmName
  */
 data class GridCell(
     val number: Int,
-    val isClicked: Boolean = false
+    val isClicked: Boolean = false,
+    val isVisible: Boolean = true
 ) {
     /**
      * 点击此单元格
@@ -27,7 +28,7 @@ data class GridCell(
      *
      * @return 未点击的单元格副本
      */
-    fun reset(): GridCell = copy(isClicked = false)
+    fun reset(): GridCell = copy(isClicked = false, isVisible = true)
 
     /**
      * 获取单元格数字

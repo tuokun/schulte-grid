@@ -43,6 +43,10 @@ class GameEngine(
     private var penaltyMs: Long = 0
         private set
 
+    /** 是否已点击第一个数字（困难模式用） */
+    private var hasClickedFirstNumber: Boolean = false
+        private set
+
     /** 随机数生成器（类级别，避免重复创建） */
     private val random = Random.Default
 
@@ -72,6 +76,7 @@ class GameEngine(
     fun startGame() {
         startTime = System.currentTimeMillis()
         penaltyMs = 0
+        hasClickedFirstNumber = false
         gameState = GameState.playing(1, 0, 0, totalCells)
 
         // 重新打乱并重置所有单元格状态
@@ -114,6 +119,14 @@ class GameEngine(
     private fun handleCorrectClick(cellNumber: Int) {
         // 找到并标记单元格
         cells.find { it.number == cellNumber }?.click()
+
+        // 困难模式：点击第一个数字后隐藏所有数字
+        if (config.isHardMode() && cellNumber == 1 && !hasClickedFirstNumber) {
+            hasClickedFirstNumber = true
+            for (i in cells.indices) {
+                cells[i] = cells[i].copy(isVisible = false)
+            }
+        }
 
         // 检查游戏是否完成
         if (cellNumber >= totalCells) {

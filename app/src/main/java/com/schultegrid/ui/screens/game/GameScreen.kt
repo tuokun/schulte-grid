@@ -121,9 +121,8 @@ fun GameScreen(
                             GameGrid(
                                 cells = uiState.gridCells,
                                 dimension = uiState.gridDimension,
-                                nextExpectedNumber = (uiState.gameState as? GameState.Playing)?.nextExpectedNumber ?: 1,
-                                onCellClick = { number -> viewModel.onCellClick(number) },
-                                isEasyMode = config.isEasyMode()
+                                showHighlight = config.isEasyMode(),
+                                onCellClick = { number -> viewModel.onCellClick(number) }
                             )
                         }
                     }

@@ -31,17 +31,15 @@ import com.schultegrid.ui.theme.GridCellDefault
  *
  * @param cells List of grid cells to display
  * @param dimension Grid dimension (e.g., 5 for 5x5)
- * @param nextExpectedNumber The next expected number to tap
+ * @param showHighlight Whether to show highlight border on next expected number (easy mode only)
  * @param onCellClick Callback when a cell is clicked
- * @param isEasyMode Whether easy mode is enabled (shows clicked state)
  */
 @Composable
 fun GameGrid(
     cells: List<GridCell>,
     dimension: Int,
-    nextExpectedNumber: Int,
-    onCellClick: (Int) -> Unit,
-    isEasyMode: Boolean = false
+    showHighlight: Boolean,
+    onCellClick: (Int) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(dimension),
@@ -52,9 +50,8 @@ fun GameGrid(
         items(cells.size) { index ->
             val cell = cells[index]
             GridCellItem(
-                number = cell.number,
-                isClicked = cell.isClicked && isEasyMode,
-                isNextExpected = cell.number == nextExpectedNumber,
+                cell = cell,
+                showHighlight = showHighlight,
                 onClick = { onCellClick(cell.number) }
             )
         }
@@ -66,17 +63,16 @@ fun GameGrid(
  */
 @Composable
 fun GridCellItem(
-    number: Int,
-    isClicked: Boolean,
-    isNextExpected: Boolean,
+    cell: GridCell,
+    showHighlight: Boolean,
     onClick: () -> Unit
 ) {
     val backgroundColor = when {
-        isClicked -> GridCellClicked
+        cell.isClicked -> GridCellClicked
         else -> GridCellDefault
     }
 
-    val borderColor = if (isNextExpected) {
+    val borderColor = if (showHighlight) {
         MaterialTheme.colorScheme.primary
     } else {
         Color.Transparent
@@ -91,19 +87,21 @@ fun GridCellItem(
                 shape = RoundedCornerShape(8.dp)
             )
             .border(
-                width = if (isNextExpected) 2.dp else 0.dp,
+                width = if (showHighlight) 2.dp else 0.dp,
                 color = borderColor,
                 shape = RoundedCornerShape(8.dp)
             )
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = number.toString(),
-            color = Color.Black,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
+        if (cell.isVisible) {
+            Text(
+                text = cell.number.toString(),
+                color = Color.Black,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
