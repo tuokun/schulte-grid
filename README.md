@@ -40,7 +40,9 @@
 ## 下载链接
 
 github下载：https://github.com/tuokun/schulte-grid/releases/tag/v2.1.0
+
 夸克网盘：https://pan.quark.cn/s/653b3744aa33
+
 蓝奏云：https://cgfhsc.lanzoue.com/i5Aiu3kzoafi
 
 
