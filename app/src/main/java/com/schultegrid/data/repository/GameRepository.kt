@@ -1,9 +1,13 @@
 package com.schultegrid.data.repository
 
 import android.util.ArrayMap
+import android.util.Log
 import com.schultegrid.data.local.GameRecordDao
 import com.schultegrid.data.local.toDomainModel
 import com.schultegrid.domain.model.GameRecord
+import com.schultegrid.domain.model.DailyStatistics
+import com.schultegrid.domain.model.MonthlyStatistics
+import com.schultegrid.domain.model.YearlyStatistics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -26,13 +30,6 @@ class GameRepository @Inject constructor(
 
     /**
      * 保存游戏记录
-     *
-     * 将游戏完成记录保存到数据库。
-     *
-     * @param score 完成时间（秒）
-     * @param size 网格大小
-     * @param difficulty 难度级别
-     * @return Flow 发射保存完成信号
      */
     fun saveRecord(
         score: Float,
@@ -52,11 +49,6 @@ class GameRepository @Inject constructor(
 
     /**
      * 获取所有游戏记录
-     *
-     * 返回最近 100 条游戏记录，按时间倒序排列。
-     * 数据变化时自动更新。
-     *
-     * @return 游戏记录流
      */
     fun getAllRecords(): Flow<List<GameRecord>> {
         return gameRecordsDao.getAllRecords()
@@ -66,11 +58,6 @@ class GameRepository @Inject constructor(
 
     /**
      * 获取最佳成绩
-     *
-     * 返回各网格大小的最佳成绩（最快时间）。
-     * 数据变化时自动更新。
-     *
-     * @return 最佳成绩映射（大小 -> 时间）
      */
     fun getBestScores(): Flow<ArrayMap<String, String>> {
         return gameRecordsDao.getBestScores()
@@ -86,11 +73,109 @@ class GameRepository @Inject constructor(
 
     /**
      * 删除所有游戏记录
-     *
-     * @return Flow 发射删除完成信号
      */
     fun deleteAllRecords(): Flow<Unit> = flow {
         gameRecordsDao.deleteAll()
         emit(Unit)
     }.flowOn(kotlinx.coroutines.Dispatchers.IO)
+
+    // ========== 统计查询 ==========
+
+    /**
+     * 获取每日统计数据
+     */
+    fun getDailyStatistics(
+        size: String? = null,
+        difficulty: String? = null
+    ): Flow<List<DailyStatistics>> {
+        return gameRecordsDao.getDailyStatisticsRaw(size, difficulty)
+            .map { rawList ->
+                rawList.map { parseDailyStatistics(it.data) }
+            }
+            .flowOn(kotlinx.coroutines.Dispatchers.IO)
+    }
+
+    /**
+     * 获取月度统计数据
+     */
+    fun getMonthlyStatistics(
+        size: String? = null,
+        difficulty: String? = null
+    ): Flow<List<MonthlyStatistics>> {
+        return gameRecordsDao.getMonthlyStatisticsRaw(size, difficulty)
+            .map { rawList ->
+                rawList.map { parseMonthlyStatistics(it.data) }
+            }
+            .flowOn(kotlinx.coroutines.Dispatchers.IO)
+    }
+
+    /**
+     * 获取年度统计数据
+     */
+    fun getYearlyStatistics(
+        size: String? = null,
+        difficulty: String? = null
+    ): Flow<List<YearlyStatistics>> {
+        return gameRecordsDao.getYearlyStatisticsRaw(size, difficulty)
+            .map { rawList ->
+                rawList.map { parseYearlyStatistics(it.data) }
+            }
+            .flowOn(kotlinx.coroutines.Dispatchers.IO)
+    }
+
+    // ========== 数据解析辅助方法 ==========
+
+    /**
+     * 解析每日统计数据
+     * 格式："日期|次数|平均|最佳"
+     */
+    private fun parseDailyStatistics(data: String): DailyStatistics {
+        val parts = data.split("|")
+        if (parts.size < 4) {
+            Log.e("GameRepository", "Invalid daily statistics data format: $data")
+            return DailyStatistics("", 0, 0f, 0f)
+        }
+        return DailyStatistics(
+            date = parts[0],
+            count = parts[1].toIntOrNull() ?: 0,
+            averageScore = parts[2].toFloatOrNull() ?: 0f,
+            bestScore = parts[3].toFloatOrNull() ?: 0f
+        )
+    }
+
+    /**
+     * 解析月度统计数据
+     * 格式："月份|次数|平均|最佳"
+     */
+    private fun parseMonthlyStatistics(data: String): MonthlyStatistics {
+        val parts = data.split("|")
+        if (parts.size < 4) {
+            Log.e("GameRepository", "Invalid monthly statistics data format: $data")
+            return MonthlyStatistics("", 0, 0f, 0f)
+        }
+        return MonthlyStatistics(
+            month = parts[0],
+            count = parts[1].toIntOrNull() ?: 0,
+            averageScore = parts[2].toFloatOrNull() ?: 0f,
+            bestScore = parts[3].toFloatOrNull() ?: 0f
+        )
+    }
+
+    /**
+     * 解析年度统计数据
+     * 格式："年份|次数|平均|最佳"
+     */
+    private fun parseYearlyStatistics(data: String): YearlyStatistics {
+        val parts = data.split("|")
+        if (parts.size < 4) {
+            Log.e("GameRepository", "Invalid yearly statistics data format: $data")
+            return YearlyStatistics("", 0, 0f, 0f)
+        }
+        return YearlyStatistics(
+            year = parts[0],
+            count = parts[1].toIntOrNull() ?: 0,
+            averageScore = parts[2].toFloatOrNull() ?: 0f,
+            bestScore = parts[3].toFloatOrNull() ?: 0f
+        )
+    }
 }

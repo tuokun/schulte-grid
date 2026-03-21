@@ -9,6 +9,7 @@
     <!-- Game settings -->
     <string name="setting_size">网格大小</string>
     <string name="setting_difficulty">难度级别</string>
+    <string name="setting_statistics">成绩统计</string>
     <string name="setting_history">历史成绩</string>
     <string name="setting_about">关于</string>
 
@@ -55,11 +56,30 @@
     <string name="about_title">关于</string>
     <string name="about_description">一个简洁的舒尔特方格训练应用</string>
     <string name="about_author">作者：cgfhsc</string>
-    <string name="about_version">版本：2.1.0</string>
+    <string name="about_version">版本：%s</string>
 
     <!-- Dialogs -->
     <string name="select_size_title">选择网格大小</string>
     <string name="select_difficulty_title">选择难度</string>
     <string name="cancel">取消</string>
     <string name="ok">确定</string>
+
+    <!-- Statistics -->
+    <string name="statistics">成绩统计</string>
+    <string name="period_day">按日</string>
+    <string name="period_month">按月</string>
+    <string name="period_year">按年</string>
+    <string name="filter_all">全部</string>
+    <string name="filter_size">网格</string>
+    <string name="filter_difficulty">难度</string>
+    <string name="filter_title">筛选条件</string>
+    <string name="stats_count">次数</string>
+    <string name="stats_average">平均</string>
+    <string name="stats_best">最佳</string>
+    <string name="stats_count_unit">次</string>
+    <string name="stats_score_unit">秒</string>
+    <string name="stats_count_with_value">%d 次</string>
+    <string name="stats_average_with_value">%s</string>
+    <string name="stats_best_with_value">%s</string>
+    <string name="no_statistics_data">暂无统计数据</string>
 </resources>

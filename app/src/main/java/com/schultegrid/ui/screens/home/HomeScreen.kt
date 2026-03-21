@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,14 +39,16 @@ import com.schultegrid.ui.components.AppTitle
 import com.schultegrid.ui.components.PrimaryButton
 import com.schultegrid.ui.components.SettingOptionCard
 import com.schultegrid.ui.theme.SchulteGridTheme
+import java.util.Locale
 
 /**
  * 主页屏幕
  *
- * 游戏设置和启动页面，用户可以选择网格大小和难度级别。
+ * 游戏设置和启动页面，用户可以选择网格大小、难度级别。
  *
  * @param onStartGame 开始游戏回调
  * @param onHistoryClick 历史记录点击回调
+ * @param onStatisticsClick 成绩统计点击回调
  * @param ViewModel 主页 ViewModel
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +56,7 @@ import com.schultegrid.ui.theme.SchulteGridTheme
 fun HomeScreen(
     onStartGame: (GameConfig) -> Unit,
     onHistoryClick: () -> Unit,
+    onStatisticsClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -68,9 +71,6 @@ fun HomeScreen(
                 TopAppBar(
                     title = { Text(stringResource(R.string.app_name)) },
                     actions = {
-                        IconButton(onClick = onHistoryClick) {
-                            Icon(Icons.Default.List, contentDescription = stringResource(R.string.history))
-                        }
                         IconButton(onClick = { showAboutDialog = true }) {
                             Icon(Icons.Default.Info, contentDescription = stringResource(R.string.about))
                         }
@@ -114,6 +114,20 @@ fun HomeScreen(
                     title = stringResource(R.string.setting_difficulty),
                     currentValue = uiState.gameConfig?.getDifficulty() ?: "",
                     onClick = { showDifficultyDialog = true }
+                )
+
+                // 历史记录
+                SettingOptionCard(
+                    title = stringResource(R.string.setting_history),
+                    currentValue = "查看历史游戏记录",
+                    onClick = onHistoryClick
+                )
+
+                // 成绩统计
+                SettingOptionCard(
+                    title = stringResource(R.string.setting_statistics),
+                    currentValue = "查看游戏成绩统计",
+                    onClick = onStatisticsClick
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -338,6 +352,15 @@ fun DifficultySelectionDialog(
 fun AboutDialog(
     onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
+    val versionName = remember {
+        try {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        } catch (e: Exception) {
+            "未知"
+        }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -365,7 +388,7 @@ fun AboutDialog(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = stringResource(R.string.about_version),
+                    text = stringResource(R.string.about_version, versionName),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

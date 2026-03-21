@@ -2,6 +2,7 @@ package com.schultegrid.data.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Dao
+import androidx.room.DatabaseView
 import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
@@ -63,6 +64,77 @@ interface GameRecordDao {
      */
     @Query("DELETE FROM game_records")
     suspend fun deleteAll()
+
+    // ========== 统计查询 ==========
+
+    /**
+     * 获取每日统计数据（原始字符串格式，用于简化 Room 映射）
+     *
+     * 使用管道符 | 作为分隔符拼接数据，格式："日期|次数|平均|最佳"
+     * 示例："2024-03-21|10|12.34|10.56"
+     */
+    @Query("""
+        SELECT
+            date(timestamp/1000, 'unixepoch', 'localtime') || '|' ||  -- 日期 (yyyy-MM-dd)
+            COUNT(*) || '|' ||                                      -- 游戏次数
+            AVG(score) || '|' ||                                      -- 平均成绩
+            MIN(score) as data                                       -- 最佳成绩
+        FROM game_records
+        WHERE (:size IS NULL OR size = :size)
+            AND (:difficulty IS NULL OR difficulty = :difficulty)
+        GROUP BY date(timestamp/1000, 'unixepoch', 'localtime')
+        ORDER BY date(timestamp/1000, 'unixepoch', 'localtime') DESC
+    """)
+    fun getDailyStatisticsRaw(
+        size: String? = null,
+        difficulty: String? = null
+    ): Flow<List<DailyStatisticsRaw>>
+
+    /**
+     * 获取月度统计数据（原始字符串格式，用于简化 Room 映射）
+     *
+     * 使用管道符 | 作为分隔符拼接数据，格式："月份|次数|平均|最佳"
+     * 示例："2024-03|50|11.23|9.87"
+     */
+    @Query("""
+        SELECT
+            strftime('%Y-%m', timestamp/1000, 'unixepoch', 'localtime') || '|' ||  -- 月份 (yyyy-MM)
+            COUNT(*) || '|' ||                                                  -- 游戏次数
+            AVG(score) || '|' ||                                                  -- 平均成绩
+            MIN(score) as data                                                   -- 最佳成绩
+        FROM game_records
+        WHERE (:size IS NULL OR size = :size)
+            AND (:difficulty IS NULL OR difficulty = :difficulty)
+        GROUP BY strftime('%Y-%m', timestamp/1000, 'unixepoch', 'localtime')
+        ORDER BY strftime('%Y-%m', timestamp/1000, 'unixepoch', 'localtime') DESC
+    """)
+    fun getMonthlyStatisticsRaw(
+        size: String? = null,
+        difficulty: String? = null
+    ): Flow<List<MonthlyStatisticsRaw>>
+
+    /**
+     * 获取年度统计数据（原始字符串格式，用于简化 Room 映射）
+     *
+     * 使用管道符 | 作为分隔符拼接数据，格式："年份|次数|平均|最佳"
+     * 示例："2024|200|10.45|8.92"
+     */
+    @Query("""
+        SELECT
+            strftime('%Y', timestamp/1000, 'unixepoch', 'localtime') || '|' ||  -- 年份 (yyyy)
+            COUNT(*) || '|' ||                                                  -- 游戏次数
+            AVG(score) || '|' ||                                                  -- 平均成绩
+            MIN(score) as data                                                   -- 最佳成绩
+        FROM game_records
+        WHERE (:size IS NULL OR size = :size)
+            AND (:difficulty IS NULL OR difficulty = :difficulty)
+        GROUP BY strftime('%Y', timestamp/1000, 'unixepoch', 'localtime')
+        ORDER BY strftime('%Y', timestamp/1000, 'unixepoch', 'localtime') DESC
+    """)
+    fun getYearlyStatisticsRaw(
+        size: String? = null,
+        difficulty: String? = null
+    ): Flow<List<YearlyStatisticsRaw>>
 }
 
 /**
@@ -75,4 +147,25 @@ data class BestScoreEntity(
     val size: String,
     @ColumnInfo(name = "best_score")
     val bestScore: Float
+)
+
+/**
+ * 每日统计原始数据（简化 Room 映射）
+ */
+data class DailyStatisticsRaw(
+    val data: String
+)
+
+/**
+ * 月度统计原始数据（简化 Room 映射）
+ */
+data class MonthlyStatisticsRaw(
+    val data: String
+)
+
+/**
+ * 年度统计原始数据（简化 Room 映射）
+ */
+data class YearlyStatisticsRaw(
+    val data: String
 )

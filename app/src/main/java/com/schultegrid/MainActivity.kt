@@ -20,6 +20,7 @@ import com.schultegrid.ui.navigation.Screen
 import com.schultegrid.ui.screens.game.GameScreen
 import com.schultegrid.ui.screens.history.HistoryScreen
 import com.schultegrid.ui.screens.home.HomeScreen
+import com.schultegrid.ui.screens.statistics.StatisticsScreen
 import com.schultegrid.ui.theme.SchulteGridTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -62,6 +63,9 @@ fun SchulteGridNavGraph(
                 },
                 onHistoryClick = {
                     navController.navigate(Screen.History.route)
+                },
+                onStatisticsClick = {
+                    navController.navigate(Screen.Statistics.route)
                 }
             )
         }
@@ -95,6 +99,15 @@ fun SchulteGridNavGraph(
         // History screen
         composable(route = Screen.History.route) {
             HistoryScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // Statistics screen
+        composable(route = Screen.Statistics.route) {
+            StatisticsScreen(
                 onBack = {
                     navController.popBackStack()
                 }
